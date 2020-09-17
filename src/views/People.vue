@@ -46,7 +46,7 @@
                                         {{item}}
                                     </span>
                                 </a-descriptions-item>
-                                <a-descriptions-item label="所在行业" v-if="this.userinfoList.business !== ''">
+                                <a-descriptions-item label="所在行业" v-if="this.userinfoList.business && this.userinfoList.business !== ''">
                                     {{this.userinfoList.business}}
                                 </a-descriptions-item>
                                 <a-descriptions-item label="职业经历" v-if="this.userinfoList.employments && this.userinfoList.employments.length !== 0 ">
@@ -112,15 +112,14 @@
                                             style="width: 100px"
                                             allow-clear
                                             v-model="form.register"
-                                            v-for="(item,index)  in this.userinfoList.locations" :key="index+'info5'"
-                                            :placeholder="item && item.length !== 0 ?  item : '123'"
+                                            :placeholder="this.userinfoList.locations && this.userinfoList.locations.length !== 0 ? this.userinfoList.locations[0] : ''"
                                     >
                                     </a-input>
                                 </a-form-model-item>
                                 <a-form-model-item label="所在行业"prop="business">
                                     <a-select
                                             v-model="form.business"
-                                            :placeholder="this.userinfoList.business ? this.userinfoList.business :'请选择行业'"
+                                            :placeholder="this.userinfoList.business ? this.userinfoList.business :''"
                                             style="width: 170px"
                                             @change="handleChangeOption"
                                             defa
@@ -139,9 +138,7 @@
           'userName',
           { ruleseducations: [{ required: true, message: 'Please input your 学习或教育机构名' }] },
         ]"
-                                            v-for="(item,index) in this.userinfoList.educations" :key="index+'info7'"
-                                            :placeholder="item && item.length !== 0 ?  item.school : '学习或教育机构名'"
-                                    >
+                                            :placeholder="this.userinfoList.educations && this.userinfoList.educations.length !== 0 ? this.userinfoList.educations[0].school : '学习或教育机构名'">
                                     </a-input>
                                 </a-form-model-item>
                                 <a-form-model-item  prop="major" label="    " :colon="false">
@@ -149,21 +146,26 @@
                                             style="width: 170px"
                                             allow-clear
                                             v-model="form.major"
-                                            v-for="(item,index) in this.userinfoList.educations" :key="index+'info8'"
-                                            :placeholder="item && item.length !== 0 ?  item.major : '专业方向(选填)'"
+                                            :placeholder="this.userinfoList.educations && this.userinfoList.educations.length !== 0 ? this.userinfoList.educations[0].major : '专业方向(选填)'"
                                     >
                                     </a-input>
                                 </a-form-model-item>
                                 <a-form-model-item prop="diploma" label="    " :colon="false">
                                     <a-select
-                                            v-for="(item,index) in this.userinfoList.educations" :key="index+'info9'"
-                                            :placeholder="item && item.length !== 0 ?  item.diploma : '学历'"
+                                            v-for="(item,index) in this.userinfoList.educations"
+                                            :key="index+'info9'"
+                                            v-model="form.diploma"
+                                            placeholder="学历"
                                             style="width: 170px"
                                             @change="handleChangeOption"
-                                            v-model="form.diploma"
+                                            :defaultValue="item.diploma"
                                     >
-                                        <a-select-option  v-for="(item1,index) in Educationsoption" :value="item1" :key="index+'info10'" >
-                                            {{item1}}
+                                        <a-select-option
+                                                v-for="(item,index) in Educationsoption"
+                                                :value="item.value"
+                                                :key="item.value"
+                                        >
+                                            {{item.label}}
                                         </a-select-option>
                                     </a-select>
                                 </a-form-model-item>
@@ -181,12 +183,12 @@
           'userName',
           { ruleseducations: [{ required: true, message: 'Please input your 学习或教育机构名' }] },
         ]"
-                                            :placeholder="this.userinfoList.headline ? this.userinfoList.headline : '请用一句话介绍你自己'"
+                                            :placeholder="this.userinfoList.headline ? this.userinfoList.headline : ''"
                                     >
                                     </a-input>
                                 </a-form-model-item>
                                 <a-form-model-item label="个人简介" prop="myintroduce">
-                                    <a-textarea v-model="form.myintroduce" :placeholder="this.userinfoList.headline ? this.userinfoList.headline : '请介绍你自己'" :rows="4" />
+                                    <a-textarea v-model="form.myintroduce" :placeholder="this.userinfoList.headline ? this.userinfoList.headline : ''" :rows="4" />
                                 </a-form-model-item>
                             </a-form-model>
                         </a-modal>
@@ -261,7 +263,23 @@
                     // ],
                     // desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }],
                 },
-                Educationsoption:['高中及以下', '大专', '本科', '硕士','博士及以上',],
+                Educationsoption:[{
+                    label : '高中及以下',
+                    value:1
+                },{
+                    label : '大专',
+                    value:2
+                },{
+                    label : '本科',
+                    value:3
+                },{
+                    label : '硕士',
+                    value:4
+                },{
+                    label : '博士及以上',
+                    value:5
+                },
+                ],
                 businessoption:['保险业','采矿','能源','餐饮','宾馆','电讯业','房地产','服务','服装业','公益组织','广告业','航空航天','化学','健康','保健','建筑业','教育','培训','计算机','金属冶炼','警察','消防','军人','会计','美容','媒体','出版','木材','造纸','零售','批发','农业','旅游业','司法','律师','司机','体育运动','学术研究','演艺','医疗服务','艺术','设计','银行','金融','因特网','音乐舞蹈','邮政快递','运输业','政府机关','机械制造','咨询'],
                 rangeConfig: {
                     rules: [{ type: 'array', required: true, message: 'Please select time!' }],

@@ -108,14 +108,17 @@ const actions = {
   updateInfo({commit}, userInfo) {
     const {school,introduce,major,business,register,gender,years,diploma} = userInfo;
     const userInfoForm = JSON.parse(window.sessionStorage.getItem('getuserInfo'))
-    console.log(userInfoForm.locations,'locations')
     return new Promise((resolve, reject) =>{
       updateInfo({educations:[{school:school !== ''? school : userInfoForm.educations[0].school,
-          diploma:diploma !== ''? diploma : userInfoForm.educations[0].diploma,
+          diploma:diploma && diploma.length !== 0 ? diploma : userInfoForm.educations[0].diploma,
           major:major !== ''? major : userInfoForm.educations[0].major,
-          entrance_year:parseInt(years[0]),graduation_year:parseInt(years[1])}],
+          entrance_year:parseInt(years[0]) !== undefined ? parseInt(years[0]) : userInfoForm.educations[0].entrance_year,
+          graduation_year:parseInt(years[1]) !== undefined ? parseInt(years[1]) :userInfoForm.educations[0].graduation_year}],
           gender:gender,
-          locations:[register !== '' ? register : userInfoForm.locations[0]],business:business,headline:introduce}).then(response => {
+          locations:[register !== '' ? register : userInfoForm.locations[0]],
+          business:business !== '' ? business : userInfoForm.business,
+          headline:introduce !== '' ? introduce : userInfoForm.headline}).then(response => {
+        console.log(userInfoForm.locations,'locations')
         if (response.code == '0'){
           window.sessionStorage.setItem('updateuserinfo',JSON.stringify(response.data))
           resolve();
